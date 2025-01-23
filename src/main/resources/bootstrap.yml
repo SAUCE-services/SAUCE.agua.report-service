@@ -3,6 +3,9 @@ app:
   eureka: 8761
   logging: debug
   name: report-service
+  mail:
+    username: uid
+    password: pwd
 
 server:
   port: ${app.port}
@@ -19,6 +22,21 @@ eureka:
 spring:
   application:
     name: ${app.name}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${app.mail.username}
+    password: ${app.mail.password}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 logging:
   level:
