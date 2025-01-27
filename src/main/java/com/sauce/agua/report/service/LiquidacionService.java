@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.sauce.agua.report.client.core.*;
 import com.sauce.agua.report.client.core.facade.ConsumoClient;
 import com.sauce.agua.report.model.dto.*;
+import com.sauce.agua.report.model.dto.facade.ConsumoContextDto;
 import com.sauce.agua.report.model.dto.facade.DatoConsumoDto;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -173,8 +174,13 @@ public class LiquidacionService {
 				.consumo(0L)
 				.build();
 		if (medidor.getMedidorId() != null) {
-			datoConsumo = consumoClient.calculateConsumo(cliente.getClienteId(), factura.getPeriodoId(),
-					medidor.getMedidorId(), factura.getFecha());
+			var consumoContext = ConsumoContextDto.builder()
+					.clienteId(cliente.getClienteId())
+					.periodoId(factura.getPeriodoId())
+					.medidorId(medidor.getMedidorId())
+					.fechaEmision(factura.getFecha())
+					.build();
+			datoConsumo = consumoClient.calculateConsumo(consumoContext);
 		}
 		logConsumo(datoConsumo);
 
