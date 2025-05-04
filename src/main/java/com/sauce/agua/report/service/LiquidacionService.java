@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.sauce.agua.report.client.core.*;
 import com.sauce.agua.report.client.core.facade.ConsumoClient;
+import com.sauce.agua.report.client.core.facade.FacturacionClient;
 import com.sauce.agua.report.model.dto.*;
 import com.sauce.agua.report.model.dto.facade.ConsumoContextDto;
 import com.sauce.agua.report.model.dto.facade.DatoConsumoDto;
@@ -28,6 +29,7 @@ import jakarta.mail.internet.MimeMessage;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -62,6 +64,10 @@ import java.io.File;
 @Slf4j
 public class LiquidacionService {
 
+	private final FacturacionClient facturacionClient;
+	@Value("${app.testing}")
+	private Boolean testing;
+
 	private final Environment env;
 	private final JavaMailSender sender;
 	private final FacturaClient facturaClient;
@@ -91,7 +97,7 @@ public class LiquidacionService {
 							  PeriodoClient periodoClient,
 							  MedidorClient medidorClient,
 							  ConsumoClient consumoClient,
-							  ClienteDatoClient clienteDatoClient) {
+							  ClienteDatoClient clienteDatoClient, FacturacionClient facturacionClient) {
 		this.env = env;
 		this.sender = sender;
 		this.facturaClient = facturaClient;
@@ -101,6 +107,7 @@ public class LiquidacionService {
 		this.medidorClient = medidorClient;
 		this.consumoClient = consumoClient;
 		this.clienteDatoClient = clienteDatoClient;
+		this.facturacionClient = facturacionClient;
 	}
 
 	public String generateOnePdf(Integer prefijoId, Long facturaId) {
@@ -267,7 +274,7 @@ public class LiquidacionService {
 			document.add(new Paragraph(" ", new Font(Font.HELVETICA, 12)));
 
 			// Periodo
-			float[] column = { 1, 1, 1, 1, 1 };
+			float[] column = { 1, 1, 1, 1 };
 			PdfPTable table = new PdfPTable(column);
 			table.setWidthPercentage(100);
 
@@ -295,17 +302,6 @@ public class LiquidacionService {
 			paragraph.add(new Phrase(
 					DateTimeFormatter.ofPattern("dd/MM/yyyy")
 							.format(periodo.getFechaPrimero().withOffsetSameInstant(ZoneOffset.UTC)),
-					new Font(Font.HELVETICA, 9, Font.BOLD)));
-			cell = new PdfPCell(paragraph);
-			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell.setVerticalAlignment(Element.ALIGN_CENTER);
-			cell.setLeading(0, 1.5f);
-			table.addCell(cell);
-			paragraph = new Paragraph("2do Vencimiento", new Font(Font.HELVETICA, 9));
-			paragraph.add(new Phrase("\n"));
-			paragraph.add(new Phrase(
-					DateTimeFormatter.ofPattern("dd/MM/yyyy")
-							.format(periodo.getFechaSegundo().withOffsetSameInstant(ZoneOffset.UTC)),
 					new Font(Font.HELVETICA, 9, Font.BOLD)));
 			cell = new PdfPCell(paragraph);
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -432,6 +428,8 @@ public class LiquidacionService {
 			// Lista rubros
 			for (DetalleDto detalle : detalleClient.findAllByFactura(prefijoId, facturaId)) {
 				if (detalle.getCantidad().compareTo(BigDecimal.ZERO) != 0) {
+					log.debug("Detalle into factura");
+					logDetalle(detalle);
 					cell = new PdfPCell(new Paragraph(detalle.getRubroId().toString(), new Font(Font.HELVETICA, 9)));
 					cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 					cell.setVerticalAlignment(Element.ALIGN_CENTER);
@@ -525,8 +523,10 @@ public class LiquidacionService {
 			cell.setBorder(Rectangle.NO_BORDER);
 			tableDeuda.addCell(cell);
 
+			log.debug("Facturas deuda");
 			for (FacturaDto facturaDeuda : facturaClient.findAllByDeudaPrint(factura.getClienteId(),
 					factura.getPeriodoId())) {
+				logFactura(facturaDeuda);
 				cell = new PdfPCell(new Paragraph(
 						MessageFormat.format("{0}/{1}", facturaDeuda.getPrefijoId(),
 								new DecimalFormat("#0").format(facturaDeuda.getFacturaId())),
@@ -567,36 +567,37 @@ public class LiquidacionService {
 				cell.setBorder(Rectangle.NO_BORDER);
 				tableDeuda.addCell(cell);
 			}
-
+			log.debug(". . . fin table deuda");
 			cell = new PdfPCell(tableDeuda);
 			tableTotales.addCell(cell);
 
 			// Totales
+			log.debug("Totales");
+			logFactura(factura);
 			paragraph = new Paragraph("Total Rubros: ", new Font(Font.HELVETICA, 9));
 			paragraph.add(
 					new Phrase(new DecimalFormat("#,##0.00").format(totalRubros.getValue()), new Font(Font.HELVETICA, 11, Font.BOLD)));
+			log.debug("Total Rubros -> {}", totalRubros.getValue());
 			paragraph.add(new Phrase("\n"));
 			paragraph.add(new Phrase("IVA CF: ", new Font(Font.HELVETICA, 9)));
 			paragraph.add(new Phrase(new DecimalFormat("#,##0.00").format(factura.getIvaCf()),
 					new Font(Font.HELVETICA, 11, Font.BOLD)));
+			log.debug("IVA CF -> {}", factura.getIvaCf());
 			paragraph.add(new Phrase("\n"));
 			paragraph.add(new Phrase("IVA RI: ", new Font(Font.HELVETICA, 9)));
 			paragraph.add(new Phrase(new DecimalFormat("#,##0.00").format(factura.getIvaRi()),
 					new Font(Font.HELVETICA, 11, Font.BOLD)));
+			log.debug("IVA RI -> {}", factura.getIvaRi());
 			paragraph.add(new Phrase("\n"));
 			paragraph.add(new Phrase("IVA RN: ", new Font(Font.HELVETICA, 9)));
 			paragraph.add(new Phrase(new DecimalFormat("#,##0.00").format(factura.getIvaRn()),
 					new Font(Font.HELVETICA, 11, Font.BOLD)));
+			log.debug("IVA RN -> {}", factura.getIvaRn());
 			paragraph.add(new Phrase("\n"));
 			paragraph.add(new Phrase("Total 1er Vencimiento: ", new Font(Font.HELVETICA, 9)));
 			paragraph.add(new Phrase(new DecimalFormat("#,##0.00").format(factura.getTotal()),
 					new Font(Font.HELVETICA, 11, Font.BOLD)));
-			paragraph.add(new Phrase("\n"));
-			paragraph.add(new Phrase("Total 2do Vencimiento: ", new Font(Font.HELVETICA, 9)));
-			paragraph.add(new Phrase(
-					new DecimalFormat("#,##0.00")
-							.format(factura.getTotal().add(factura.getInteres()).setScale(2, RoundingMode.HALF_UP)),
-					new Font(Font.HELVETICA, 11, Font.BOLD)));
+			log.debug("Total 1er Vencimiento -> {}", factura.getTotal());
 			cell = new PdfPCell(paragraph);
 			cell.setBorder(Rectangle.NO_BORDER);
 			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -605,9 +606,12 @@ public class LiquidacionService {
 			document.add(tableTotales);
 
 			// Código de Barras
+			log.debug("Recalculando Código de Barras");
+			String codigoBarras = facturacionClient.codigopf(factura);
+			log.debug("Código de Barras -> {}", codigoBarras);
 			BarcodeInter25 code25 = new BarcodeInter25();
 			code25.setGenerateChecksum(false);
-			code25.setCode(factura.getPfCodigo());
+			code25.setCode(codigoBarras);
 			code25.setX(1.3f);
 
 			Image image = code25.createImageWithBarcode(writer.getDirectContent(), null, null);
@@ -621,6 +625,32 @@ public class LiquidacionService {
 		}
 
 		return filename;
+	}
+
+	private void logTotalRubros(MutableValue<BigDecimal> totalRubros) {
+		try {
+			log.debug("TotalRubros: {}", JsonMapper
+					.builder()
+					.findAndAddModules()
+					.build()
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(totalRubros.getValue()));
+		} catch (JsonProcessingException e) {
+			log.debug("TotalRubros jsonify error: {}", e.getMessage());
+		}
+	}
+
+	private void logDetalle(DetalleDto detalle) {
+		try {
+			log.debug("Detalle: {}", JsonMapper
+					.builder()
+					.findAndAddModules()
+					.build()
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(detalle));
+		} catch (JsonProcessingException e) {
+			log.debug("Detalle jsonify error: {}", e.getMessage());
+		}
 	}
 
 	private class FooterPageEvent extends PdfPageEventHelper {
@@ -645,7 +675,8 @@ public class LiquidacionService {
 
 		public void onEndPage(PdfWriter writer, Document document) {
 			try {
-				PdfPTable footer = new PdfPTable(2);
+				float[] widthCabecera = {20, 1, 20 };
+				PdfPTable footer = new PdfPTable(widthCabecera);
 				footer.setWidthPercentage(100);
 				footer.setTotalWidth(document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin());
 				
@@ -653,6 +684,8 @@ public class LiquidacionService {
 				paragraph.add(new Phrase(" Unión Vecinal de Servicios Públicos El Sauce", new Font(Font.HELVETICA, 8)));
 				var cell = new PdfPCell(paragraph);
 				footer.addCell(cell);
+				// columna central vacía
+				footer.addCell(new PdfPCell(new Paragraph("")));
 
 				footer.addCell(cell);
 
@@ -673,6 +706,8 @@ public class LiquidacionService {
 				cell.setBackgroundColor(grisClaro);
 				tableCliente.addCell(cell);
 				footer.addCell(tableCliente);
+				// columna central vacía
+				footer.addCell(new PdfPCell(new Paragraph("")));
 
 				footer.addCell(tableCliente);
 
@@ -690,11 +725,13 @@ public class LiquidacionService {
 				cell = new PdfPCell(paragraph);
 				tableCliente.addCell(cell);
 				footer.addCell(tableCliente);
+				// columna central vacía
+				footer.addCell(new PdfPCell(new Paragraph("")));
 
 				footer.addCell(tableCliente);
 
 				// Datos
-				var footerData = new PdfPTable(4);
+				var footerData = new PdfPTable(widthCliente);
 				footerData.setWidthPercentage(100);
 				paragraph = new Paragraph(new Phrase("Cliente", new Font(Font.HELVETICA, 8)));
 				cell = new PdfPCell(paragraph);
@@ -708,15 +745,13 @@ public class LiquidacionService {
 				cell = new PdfPCell(paragraph);
 				cell.setBackgroundColor(grisClaro);
 				footerData.addCell(cell);
-				paragraph = new Paragraph(new Phrase("2do Venc.", new Font(Font.HELVETICA, 8)));
-				cell = new PdfPCell(paragraph);
-				cell.setBackgroundColor(grisClaro);
-				footerData.addCell(cell);
 				footer.addCell(footerData);
+				// columna central vacía
+				footer.addCell(new PdfPCell(new Paragraph("")));
 
 				footer.addCell(footerData);
 
-				footerData = new PdfPTable(4);
+				footerData = new PdfPTable(widthCliente);
 				footerData.setWidthPercentage(100);
 				paragraph = new Paragraph(new Phrase(cliente.getClienteId().toString(), new Font(Font.HELVETICA, 8, Font.BOLD)));
 				cell = new PdfPCell(paragraph);
@@ -729,15 +764,13 @@ public class LiquidacionService {
 						.format(periodo.getFechaPrimero().withOffsetSameInstant(ZoneOffset.UTC)), new Font(Font.HELVETICA, 8, Font.BOLD)));
 				cell = new PdfPCell(paragraph);
 				footerData.addCell(cell);
-				paragraph = new Paragraph(new Phrase(DateTimeFormatter.ofPattern("dd/MM/yyyy")
-						.format(periodo.getFechaSegundo().withOffsetSameInstant(ZoneOffset.UTC)), new Font(Font.HELVETICA, 8, Font.BOLD)));
-				cell = new PdfPCell(paragraph);
-				footerData.addCell(cell);
 				footer.addCell(footerData);
+				// columna central vacía
+				footer.addCell(new PdfPCell(new Paragraph("")));
 
 				footer.addCell(footerData);
 
-				footerData = new PdfPTable(4);
+				footerData = new PdfPTable(widthCliente);
 				footerData.setWidthPercentage(100);
 				paragraph = new Paragraph("Servicio", new Font(Font.HELVETICA, 8));
 				cell = new PdfPCell(paragraph);
@@ -751,27 +784,29 @@ public class LiquidacionService {
 				cell = new PdfPCell(paragraph);
 				cell.setBackgroundColor(grisClaro);
 				footerData.addCell(cell);
-				footerData.addCell(cell);
 				footer.addCell(footerData);
+				// columna central vacía
+				footer.addCell(new PdfPCell(new Paragraph("")));
 
 				footer.addCell(footerData);
 
-				footerData = new PdfPTable(4);
+				footerData = new PdfPTable(widthCliente);
 				footerData.setWidthPercentage(100);
 				paragraph = new Paragraph(new DecimalFormat("#,##0.00").format(totalRubros.getValue()), new Font(Font.HELVETICA, 8, Font.BOLD));
 				cell = new PdfPCell(paragraph);
+				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				footerData.addCell(cell);
 				paragraph = new Paragraph(new DecimalFormat("#,##0.00").format(factura.getIvaCf().add(factura.getIvaRi()).add(factura.getIvaRn())), new Font(Font.HELVETICA, 8, Font.BOLD));
 				cell = new PdfPCell(paragraph);
+				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				footerData.addCell(cell);
-				paragraph = new Paragraph(new DecimalFormat("#,##0.00").format(factura.getTotal()), new Font(Font.HELVETICA, 8, Font.BOLD));
+				paragraph = new Paragraph(new DecimalFormat("#,##0.00").format(factura.getTotal()), new Font(Font.HELVETICA, 10, Font.BOLD));
 				cell = new PdfPCell(paragraph);
-				footerData.addCell(cell);
-				paragraph = new Paragraph(new DecimalFormat("#,##0.00")
-						.format(factura.getTotal().add(factura.getInteres()).setScale(2, RoundingMode.HALF_UP)), new Font(Font.HELVETICA, 8, Font.BOLD));
-				cell = new PdfPCell(paragraph);
+				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				footerData.addCell(cell);
 				footer.addCell(footerData);
+				// columna central vacía
+				footer.addCell(new PdfPCell(new Paragraph("")));
 
 				footer.addCell(footerData);
 
@@ -784,6 +819,7 @@ public class LiquidacionService {
 	}
 
 	public String sendLiquidacion(Integer prefijoId, Long facturaId) throws MessagingException {
+		log.debug("Processing LiquidacionService.sendLiquidacion");
 		String filenameLiquidacion = this.generateOnePdf(prefijoId, facturaId);
         log.info("Filename_liquidacion -> {}", filenameLiquidacion);
 		if (filenameLiquidacion.isEmpty()) {
@@ -809,8 +845,16 @@ public class LiquidacionService {
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 		List<String> addresses = new ArrayList<String>();
 		FacturaDto factura = facturaClient.findByFactura(prefijoId, facturaId);
-		ClienteDatoDto clienteDato = clienteDatoClient.findByClienteId(factura.getClienteId());
-		addresses.add(clienteDato.getEmail());
+		logFactura(factura);
+
+		if (!testing) {
+			ClienteDatoDto clienteDato = clienteDatoClient.findByClienteId(factura.getClienteId());
+			logClienteDato(clienteDato);
+			addresses.add(clienteDato.getEmail());
+		}
+		if (testing) {
+			addresses.add("daniel.quinterospinto@gmail.com");
+		}
 
 		try {
 			helper.setTo(addresses.toArray(new String[0]));
@@ -830,9 +874,17 @@ public class LiquidacionService {
 		return "Envío de Correo Ok!!";
 	}
 
+	private void logClienteDato(ClienteDatoDto clienteDato) {
+	}
+
 	private void logFactura(FacturaDto factura) {
 		try {
-			log.debug("Factura: {}", JsonMapper.builder().findAndAddModules().build().writerWithDefaultPrettyPrinter().writeValueAsString(factura));
+			log.debug("Factura: {}", JsonMapper
+					.builder()
+					.findAndAddModules()
+					.build()
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(factura));
 		} catch (JsonProcessingException e) {
 			log.debug("Factura jsonify error: {}", e.getMessage());
 		}
@@ -840,7 +892,12 @@ public class LiquidacionService {
 
 	private void logCliente(ClienteDto cliente) {
 		try {
-			log.debug("Cliente: {}", JsonMapper.builder().findAndAddModules().build().writerWithDefaultPrettyPrinter().writeValueAsString(cliente));
+			log.debug("Cliente: {}", JsonMapper
+					.builder()
+					.findAndAddModules()
+					.build()
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(cliente));
 		} catch (JsonProcessingException e) {
 			log.debug("Cliente jsonify error: {}", e.getMessage());
 		}
@@ -848,7 +905,12 @@ public class LiquidacionService {
 
 	private void logPeriodo(PeriodoDto periodo) {
 		try {
-			log.debug("Periodo: {}", JsonMapper.builder().findAndAddModules().build().writerWithDefaultPrettyPrinter().writeValueAsString(periodo));
+			log.debug("Periodo: {}", JsonMapper
+					.builder()
+					.findAndAddModules()
+					.build()
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(periodo));
 		} catch (JsonProcessingException e) {
 			log.debug("Periodo jsonify error: {}", e.getMessage());
 		}
@@ -856,7 +918,12 @@ public class LiquidacionService {
 
 	private void logMedidor(MedidorDto medidor) {
 		try {
-			log.debug("Medidor: {}", JsonMapper.builder().findAndAddModules().build().writerWithDefaultPrettyPrinter().writeValueAsString(medidor));
+			log.debug("Medidor: {}", JsonMapper
+					.builder()
+					.findAndAddModules()
+					.build()
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(medidor));
 		} catch (JsonProcessingException e) {
 			log.debug("Medidor jsonify error: {}", e.getMessage());
 		}
@@ -864,7 +931,12 @@ public class LiquidacionService {
 
 	private void logConsumo(DatoConsumoDto consumo) {
 		try {
-			log.debug("Consumo: {}", JsonMapper.builder().findAndAddModules().build().writerWithDefaultPrettyPrinter().writeValueAsString(consumo));
+			log.debug("Consumo: {}", JsonMapper
+					.builder()
+					.findAndAddModules()
+					.build()
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(consumo));
 		} catch (JsonProcessingException e) {
 			log.debug("Consumo jsonify error: {}", e.getMessage());
 		}
