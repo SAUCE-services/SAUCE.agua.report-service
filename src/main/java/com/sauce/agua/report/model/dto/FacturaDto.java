@@ -40,7 +40,6 @@ public class FacturaDto {
     private Byte cancelada = 0;
     private Integer planIdCancela;
     private String pfCodigo;
-    private String pfBarras;
     private Long cajamovimientoId;
     private String uid = "";
     private PeriodoDto periodo;

@@ -3,6 +3,7 @@ app:
   eureka: 8761
   logging: debug
   name: report-service
+  testing: false
   mail:
     username: uid
     password: pwd
