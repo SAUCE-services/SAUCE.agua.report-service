@@ -17,7 +17,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Actualización de dependencias:
   - Spring Boot de 3.4.2 a 3.4.5
   - Spring Cloud de 2024.0.0 a 2024.0.1
-  - SpringDoc OpenAPI de 2.8.4 a 2.8.6
+  - SpringDoc OpenAPI de 2.8.6 a 2.8.8
 - Mejora en el formato del footer de las liquidaciones
 - Optimización del layout de las tablas en el PDF
 - Refactorización del código de logging para mejor legibilidad
