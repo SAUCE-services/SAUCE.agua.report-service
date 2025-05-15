@@ -608,15 +608,17 @@ public class LiquidacionService {
 			// Código de Barras
 			log.debug("Recalculando Código de Barras");
 			String codigoBarras = facturacionClient.codigopf(factura);
-			log.debug("Código de Barras -> {}", codigoBarras);
-			BarcodeInter25 code25 = new BarcodeInter25();
-			code25.setGenerateChecksum(false);
-			code25.setCode(codigoBarras);
-			code25.setX(1.3f);
+			if (!codigoBarras.equals("00")) {
+				log.debug("Código de Barras -> {}", codigoBarras);
+				BarcodeInter25 code25 = new BarcodeInter25();
+				code25.setGenerateChecksum(false);
+				code25.setCode(codigoBarras);
+				code25.setX(1.3f);
 
-			Image image = code25.createImageWithBarcode(writer.getDirectContent(), null, null);
-			image.setAlignment(Element.ALIGN_CENTER);
-			document.add(image);
+				Image image = code25.createImageWithBarcode(writer.getDirectContent(), null, null);
+				image.setAlignment(Element.ALIGN_CENTER);
+				document.add(image);
+			}
 
 			//
 			document.close();

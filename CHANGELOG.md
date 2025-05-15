@@ -32,6 +32,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Corrección en la generación de códigos de barras usando el servicio de facturación
 - Ajuste en el alineamiento de valores numéricos en el footer
 - Mejora en el manejo de correos electrónicos en modo testing
+- Validación adicional para evitar generar códigos de barras cuando el valor es "00"
 
 ## [0.0.1] - 2024-01-24
 
