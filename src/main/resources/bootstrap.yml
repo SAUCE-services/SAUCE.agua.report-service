@@ -1,8 +1,10 @@
 app:
   port: ${APP_PORT:8092}
-  eureka: 8761
   logging: debug
   name: report-service
+  consul:
+    host: consul-service
+    port: 8500
   testing: false
   mail:
     username: uid
@@ -11,18 +13,16 @@ app:
 server:
   port: ${app.port}
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://eureka:@eureka-service:${app.eureka}/eureka
-
 spring:
   application:
     name: ${app.name}
+  cloud:
+    consul:
+      host: ${app.consul.host}
+      port: ${app.consul.port}
+      discovery:
+        prefer-ip-address: true
+        tags: report
   mail:
     host: smtp.gmail.com
     port: 587

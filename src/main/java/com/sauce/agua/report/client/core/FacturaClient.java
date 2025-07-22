@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "core-service/api/core/factura")
+@FeignClient(name = "core-service", contextId = "facturaClient", path = "/api/core/factura")
 public interface FacturaClient {
 
     @GetMapping("/periodo/{periodoId}")

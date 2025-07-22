@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "core-service/api/core/cliente")
+@FeignClient(name = "core-service", contextId = "clienteClient", path = "/api/core/cliente")
 public interface ClienteClient {
 
     @PostMapping("/search")

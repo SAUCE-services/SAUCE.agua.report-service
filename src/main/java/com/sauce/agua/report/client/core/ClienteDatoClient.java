@@ -4,7 +4,7 @@ import com.sauce.agua.report.model.dto.ClienteDatoDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "core-service/api/core/clientedato")
+@FeignClient(name = "core-service", contextId = "clienteDatoClient", path="/api/core/clientedato")
 public interface ClienteDatoClient {
 
     @GetMapping("/{clienteId}")

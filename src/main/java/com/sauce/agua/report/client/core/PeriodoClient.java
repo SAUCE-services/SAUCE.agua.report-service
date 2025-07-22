@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@FeignClient(name = "core-service/api/core/periodo")
+@FeignClient(name = "core-service", contextId = "periodoClient", path = "/api/core/periodo")
 public interface PeriodoClient {
 
     @GetMapping("/")

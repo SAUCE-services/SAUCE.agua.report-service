@@ -65,6 +65,7 @@ import java.io.File;
 public class LiquidacionService {
 
 	private final FacturacionClient facturacionClient;
+
 	@Value("${app.testing}")
 	private Boolean testing;
 
@@ -111,7 +112,7 @@ public class LiquidacionService {
 	}
 
 	public String generateOnePdf(Integer prefijoId, Long facturaId) {
-		log.debug("Processing generateOnePdf");
+		log.debug("Processing LiquidacionService.generateOnePdf");
 		String path = env.getProperty("path.files");
 		String filename = path + "liquidacion." + prefijoId + "." + facturaId + ".pdf";
 
