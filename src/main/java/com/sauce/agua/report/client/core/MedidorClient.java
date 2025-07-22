@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "core-service/api/core/medidor")
+@FeignClient(name = "core-service", contextId = "medidorClient", path = "/api/core/medidor")
 public interface MedidorClient {
 
     @GetMapping("/cliente/{clienteId}/{colocado}")
