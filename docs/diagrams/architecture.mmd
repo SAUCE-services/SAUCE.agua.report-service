@@ -1,0 +1,41 @@
+graph TD
+    subgraph "Cliente/Frontend"
+        WEB[Aplicación Web]
+        MOBILE[Aplicación Móvil]
+    end
+    
+    subgraph "Gateway/API"
+        GATEWAY[Spring Cloud Gateway]
+    end
+    
+    subgraph "Servicios Core"
+        CORE[Core Service]
+        FACT[Facturación Service]
+        CONSUMO[Consumo Service]
+    end
+    
+    subgraph "Infraestructura"
+        EUREKA[Eureka Server]
+        CONSUL[Consul]
+        MAIL[SMTP Server]
+    end
+    
+    subgraph "Report Service"
+        CTRL[LiquidacionController]
+        SERVICE[LiquidacionService]
+        CLIENT[Feign Clients]
+        PDF[OpenPDF Generator]
+    end
+    
+    WEB --> GATEWAY
+    MOBILE --> GATEWAY
+    GATEWAY --> CTRL
+    CTRL --> SERVICE
+    SERVICE --> CLIENT
+    CLIENT --> CORE
+    CLIENT --> FACT
+    CLIENT --> CONSUMO
+    SERVICE --> PDF
+    PDF --> MAIL
+    SERVICE --> EUREKA
+    SERVICE --> CONSUL

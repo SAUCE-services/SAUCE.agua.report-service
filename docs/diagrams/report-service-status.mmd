@@ -1,0 +1,17 @@
+stateDiagram-v2
+    [*] --> Starting
+    
+    Starting --> RegisteringEureka: Service Registration
+    RegisteringEureka --> RegisteringConsul: Service Discovery
+    RegisteringConsul --> Ready: Registration Complete
+    
+    Ready --> GeneratingPDF: PDF Request
+    GeneratingPDF --> SendingEmail: PDF Generated
+    SendingEmail --> Ready: Email Sent
+    
+    Ready --> HealthCheck: Periodic Health Check
+    HealthCheck --> Ready: Health OK
+    HealthCheck --> Unhealthy: Health Failed
+    
+    Unhealthy --> Ready: Recovery
+    Ready --> [*]: Shutdown

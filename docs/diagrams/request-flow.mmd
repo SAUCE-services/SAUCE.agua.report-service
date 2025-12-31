@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant Client
+    participant Controller
+    participant Service
+    participant FactClient as Facturación Client
+    participant ClienteClient as Cliente Client
+    participant PDF as OpenPDF
+    participant Mail as Email Service
+    
+    Client->>Controller: POST /liquidacion/generate
+    Controller->>Service: generateOnePdf(prefijoId, facturaId)
+    
+    Service->>FactClient: getFactura(facturaId)
+    FactClient-->>Service: FacturaDto
+    
+    Service->>ClienteClient: getCliente(clienteId)
+    ClienteClient-->>Service: ClienteDto
+    
+    Service->>PDF: createPDF(factura, cliente)
+    PDF-->>Service: PDF File
+    
+    Service->>Mail: sendEmail(customerEmail, PDF)
+    Mail-->>Service: Email Sent
+    
+    Service-->>Controller: PDF Path
+    Controller-->>Client: Success Response
