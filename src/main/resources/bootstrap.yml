@@ -38,6 +38,19 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+  actuator:
+    enabled: true
+    health:
+      mail:
+        enabled: false
+
+management:
+  health:
+    mail:
+      enabled: false
+  endpoints:
+    access:
+      default: none
 
 logging:
   level:

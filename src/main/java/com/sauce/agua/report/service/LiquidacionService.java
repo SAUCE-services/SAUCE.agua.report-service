@@ -28,32 +28,22 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.openpdf.text.*;
+import org.openpdf.text.Font;
+import org.openpdf.text.Image;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BarcodeInter25;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.PdfPageEventHelper;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 
-import com.lowagie.text.pdf.PdfCopy;
-import com.lowagie.text.pdf.PdfReader;
 import java.io.File;
 
 /**
@@ -62,6 +52,7 @@ import java.io.File;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class LiquidacionService {
 
 	private final FacturacionClient facturacionClient;
@@ -89,27 +80,6 @@ public class LiquidacionService {
 		}
 
     }
-
-	public LiquidacionService(Environment env,
-							  JavaMailSender sender,
-							  FacturaClient facturaClient,
-							  DetalleClient detalleClient,
-							  ClienteClient clienteClient,
-							  PeriodoClient periodoClient,
-							  MedidorClient medidorClient,
-							  ConsumoClient consumoClient,
-							  ClienteDatoClient clienteDatoClient, FacturacionClient facturacionClient) {
-		this.env = env;
-		this.sender = sender;
-		this.facturaClient = facturaClient;
-		this.detalleClient = detalleClient;
-		this.clienteClient = clienteClient;
-		this.periodoClient = periodoClient;
-		this.medidorClient = medidorClient;
-		this.consumoClient = consumoClient;
-		this.clienteDatoClient = clienteDatoClient;
-		this.facturacionClient = facturacionClient;
-	}
 
 	public String generateOnePdf(Integer prefijoId, Long facturaId) {
 		log.debug("Processing LiquidacionService.generateOnePdf");
