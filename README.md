@@ -1,10 +1,10 @@
 # Report Service
 
 [![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.8-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.0.0-blue.svg)](https://spring.io/projects/spring-cloud)
-[![OpenPDF](https://img.shields.io/badge/OpenPDF-3.0.0-red.svg)](https://github.com/LibrePDF/OpenPDF)
-[![SpringDoc OpenAPI](https://img.shields.io/badge/SpringDoc%20OpenAPI-2.8.10-blue.svg)](https://springdoc.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.4-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.0-blue.svg)](https://spring.io/projects/spring-cloud)
+[![OpenPDF](https://img.shields.io/badge/OpenPDF-3.0.3-red.svg)](https://github.com/LibrePDF/OpenPDF)
+[![SpringDoc OpenAPI](https://img.shields.io/badge/SpringDoc%20OpenAPI-3.0.2-blue.svg)](https://springdoc.org/)
 [![Maven](https://img.shields.io/badge/Maven-3.8+-red.svg)](https://maven.apache.org/)
 
 Servicio de generación de reportes para el sistema de gestión de agua.
@@ -26,13 +26,13 @@ Este servicio es responsable de generar reportes y liquidaciones en formato PDF 
 ## Tecnologías
 
 - Java 25
-- Spring Boot 3.5.8
-- Spring Cloud 2025.0.0
-- OpenPDF 3.0.0 (migrado desde iText)
+- Spring Boot 4.0.4
+- Spring Cloud 2025.1.0
+- OpenPDF 3.0.3 (migrado desde iText)
 - Spring Cloud Netflix Eureka Client
 - Spring Cloud OpenFeign
 - Spring Boot Mail
-- SpringDoc OpenAPI 2.8.10
+- SpringDoc OpenAPI 3.0.2
 - Lombok para reducción de boilerplate code
 - Caffeine para caching
 - Consul para service discovery
