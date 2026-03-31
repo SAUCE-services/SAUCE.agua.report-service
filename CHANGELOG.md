@@ -5,32 +5,22 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2025-12-31
+## [1.0.0] - 2026-03-31
 
 ### Changed
-- **BREAKING**: Migración completa de librerías PDF de `com.lowagie.text` a `org.openpdf.text`
-  - Actualización de OpenPDF: 2.2.3 → 3.0.0
-  - Eliminación de dependencias obsoletas de iText
-  - Refactorización de imports y clases PDF
-- **deps**: Actualización de Spring Boot: 3.5.3 → 3.5.8
-- **deps**: Actualización de Java: 24 → 25
-- **deps**: Actualización de SpringDoc OpenAPI: 2.8.9 → 2.8.10
-- **refactor**: Simplificación del constructor usando Lombok @RequiredArgsConstructor
-- **config**: Mejoras en configuración de actuator health checks
-- **config**: Configuración de management endpoints access control
+- **BREAKING**: Actualización de Spring Boot 3.5.8 → 4.0.4
+- **deps**: Actualización de Spring Cloud: 2025.0.0 → 2025.1.0
+- **deps**: Actualización de SpringDoc OpenAPI: 2.8.10 → 3.0.2
+- **deps**: Actualización de OpenPDF: 3.0.0 → 3.0.3
+- **deps**: Actualización de commons-lang3: 3.18.0 → 3.20.0
+- **config**: Eliminación de configuración executable en spring-boot-maven-plugin
+- **refactor**: ConsumoContextDto y DatoConsumoDto usan @Getter/@Setter/@NoArgsConstructor/@AllArgsConstructor
 
 ### Added
-- **config**: Configuración mejorada de actuator health checks
-- **config**: Configuración de management endpoints con acceso controlado
-- **infra**: Actualización de Docker images para JDK 25
-- **ci**: Actualización del workflow de GitHub Actions para JDK 25
-
-### Fixed
-- **perf**: Optimización en la generación de PDFs con la nueva librería OpenPDF
-- **deps**: Eliminación de dependencias redundantes de iText
+- **deps**: Nueva dependencia commons-fileupload 1.6.0
 
 ### Security
-- **deps**: Actualización a las últimas versiones estables de dependencias
+- Actualización a últimas versiones estables de dependencias
 
 ## [Unreleased]
 

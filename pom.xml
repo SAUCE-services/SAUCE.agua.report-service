@@ -5,18 +5,18 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.8</version>
+		<version>4.0.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sauce.agua.report</groupId>
 	<artifactId>report-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>SAUCE.agua.report-service</name>
 	<description>sauce.agua.report-service</description>
 
 	<properties>
 		<java.version>25</java.version>
-		<spring-cloud.version>2025.0.0</spring-cloud.version>
+		<spring-cloud.version>2025.1.0</spring-cloud.version>
 		<sonar.organization>sauce-services</sonar.organization>
 		<sonar.projectKey>SAUCE-services_SAUCE.agua.report-service</sonar.projectKey>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.8.10</version>
+			<version>3.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>com.github.librepdf</groupId>
 			<artifactId>openpdf</artifactId>
-			<version>3.0.0</version>
+			<version>3.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -90,7 +90,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.18.0</version>
+				<version>3.20.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
@@ -98,6 +98,11 @@
 				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.6.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -108,9 +113,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<executable>true</executable>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
