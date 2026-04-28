@@ -12,6 +12,10 @@ graph TD
         CORE[Core Service]
         FACT[Facturación Service]
         CONSUMO[Consumo Service]
+        PERIODO[Periodo Service]
+        MEDIDOR[Medidor Service]
+        DETALLE[Detalle Service]
+        CLIENTE[Cliente Service]
     end
     
     subgraph "Infraestructura"
@@ -35,6 +39,10 @@ graph TD
     CLIENT --> CORE
     CLIENT --> FACT
     CLIENT --> CONSUMO
+    CLIENT --> PERIODO
+    CLIENT --> MEDIDOR
+    CLIENT --> DETALLE
+    CLIENT --> CLIENTE
     SERVICE --> PDF
     PDF --> MAIL
     SERVICE --> EUREKA

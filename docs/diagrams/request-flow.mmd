@@ -2,21 +2,41 @@ sequenceDiagram
     participant Client
     participant Controller
     participant Service
-    participant FactClient as Facturación Client
+    participant FacturaClient as Factura Client
     participant ClienteClient as Cliente Client
+    participant PeriodoClient as Periodo Client
+    participant MedidorClient as Medidor Client
+    participant DetalleClient as Detalle Client
+    participant ConsumoClient as Consumo Client
+    participant ClienteDatoClient as ClienteDato Client
     participant PDF as OpenPDF
     participant Mail as Email Service
     
     Client->>Controller: POST /liquidacion/generate
     Controller->>Service: generateOnePdf(prefijoId, facturaId)
     
-    Service->>FactClient: getFactura(facturaId)
-    FactClient-->>Service: FacturaDto
+    Service->>FacturaClient: findByFactura(prefijoId, facturaId)
+    FacturaClient-->>Service: FacturaDto
     
-    Service->>ClienteClient: getCliente(clienteId)
+    Service->>ClienteClient: findLastByClienteId(clienteId)
     ClienteClient-->>Service: ClienteDto
     
-    Service->>PDF: createPDF(factura, cliente)
+    Service->>PeriodoClient: findByPeriodoId(periodoId)
+    PeriodoClient-->>Service: PeriodoDto
+    
+    Service->>MedidorClient: findByMedidorId(medidorId)
+    MedidorClient-->>Service: MedidorDto
+    
+    Service->>DetalleClient: findAllByFacturaId(facturaId)
+    DetalleClient-->>Service: List<DetalleDto>
+    
+    Service->>ConsumoClient: findAllByFacturaId(facturaId)
+    ConsumoClient-->>Service: List<ConsumoDto>
+    
+    Service->>ClienteDatoClient: findAllByClienteId(clienteId)
+    ClienteDatoClient-->>Service: List<ClienteDatoDto>
+    
+    Service->>PDF: createPDF(factura, cliente, periodo, detalles, consumos)
     PDF-->>Service: PDF File
     
     Service->>Mail: sendEmail(customerEmail, PDF)

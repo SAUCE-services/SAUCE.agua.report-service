@@ -5,6 +5,17 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.0.1] - 2026-04-28
+
+### Changed
+- **deps**: Actualización de Spring Boot: 4.0.4 → 4.0.6
+- **config**: Configuración de Feign Decoder con `ResponseEntityDecoder` y `SpringDecoder` en `ReportConfiguration`
+
+### Fixed
+- Mejora en la configuración de deserialización de respuestas Feign
+
 ## [1.0.0] - 2026-03-31
 
 ### Changed
@@ -21,35 +32,6 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Security
 - Actualización a últimas versiones estables de dependencias
-
-## [Unreleased]
-
-### Added
-- Nuevo cliente Feign `FacturacionClient` para integración con el servicio de facturación
-- Configuración de modo testing en `bootstrap.yml`
-- Logging mejorado para debugging en `LiquidacionService`
-- Métodos de logging para objetos DTOs
-
-### Changed
-- Actualización de dependencias:
-  - Spring Boot de 3.4.2 a 3.4.5
-  - Spring Cloud de 2024.0.0 a 2024.0.1
-  - SpringDoc OpenAPI de 2.8.6 a 2.8.8
-- Mejora en el formato del footer de las liquidaciones
-- Optimización del layout de las tablas en el PDF
-- Refactorización del código de logging para mejor legibilidad
-- Modificación del sistema de envío de correos para soportar modo testing
-
-### Removed
-- Campo `pfBarras` de `FacturaDto`
-- Sección de "2do Vencimiento" de las liquidaciones
-- Código redundante en el footer de las liquidaciones
-
-### Fixed
-- Corrección en la generación de códigos de barras usando el servicio de facturación
-- Ajuste en el alineamiento de valores numéricos en el footer
-- Mejora en el manejo de correos electrónicos en modo testing
-- Validación adicional para evitar generar códigos de barras cuando el valor es "00"
 
 ## [0.0.1] - 2024-01-24
 
