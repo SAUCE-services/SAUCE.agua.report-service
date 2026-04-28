@@ -1,7 +1,7 @@
 # Report Service
 
 [![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.4-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.0-blue.svg)](https://spring.io/projects/spring-cloud)
 [![OpenPDF](https://img.shields.io/badge/OpenPDF-3.0.3-red.svg)](https://github.com/LibrePDF/OpenPDF)
 [![SpringDoc OpenAPI](https://img.shields.io/badge/SpringDoc%20OpenAPI-3.0.2-blue.svg)](https://springdoc.org/)
@@ -11,7 +11,7 @@ Servicio de generación de reportes para el sistema de gestión de agua.
 
 ## Descripción
 
-Este servicio es responsable de generar reportes y liquidaciones en formato PDF para el sistema de gestión de agua. Utiliza OpenPDF 3.0.0 para la generación de documentos PDF y se integra con otros servicios a través de Spring Cloud. En esta versión se ha migrado completamente de iText a OpenPDF para mejorar el rendimiento y mantener compatibilidad con licencias.
+Este servicio es responsable de generar reportes y liquidaciones en formato PDF para el sistema de gestión de agua. Utiliza OpenPDF 3.0.3 para la generación de documentos PDF y se integra con otros servicios a través de Spring Cloud. En esta versión se ha migrado completamente de iText a OpenPDF para mejorar el rendimiento y mantener compatibilidad con licencias.
 
 ## Características
 
@@ -26,7 +26,7 @@ Este servicio es responsable de generar reportes y liquidaciones en formato PDF 
 ## Tecnologías
 
 - Java 25
-- Spring Boot 4.0.4
+- Spring Boot 4.0.6
 - Spring Cloud 2025.1.0
 - OpenPDF 3.0.3 (migrado desde iText)
 - Spring Cloud Netflix Eureka Client
@@ -94,6 +94,17 @@ String pdfPath = liquidacionService.generateZonaPdf(periodoId, zona);
 ```java
 String result = liquidacionService.sendLiquidacion(prefijoId, facturaId);
 ```
+
+## Diagramas
+
+### Arquitectura del Servicio
+![Arquitectura](docs/diagrams/architecture.mmd)
+
+### Flujo de Solicitud
+![Flujo de Solicitud](docs/diagrams/request-flow.mmd)
+
+### Estados del Servicio
+![Estados del Servicio](docs/diagrams/report-service-status.mmd)
 
 ## Desarrollo
 
