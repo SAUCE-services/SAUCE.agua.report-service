@@ -1,17 +1,17 @@
 # Report Service
 
 [![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.0-blue.svg)](https://spring.io/projects/spring-cloud)
-[![OpenPDF](https://img.shields.io/badge/OpenPDF-3.0.3-red.svg)](https://github.com/LibrePDF/OpenPDF)
-[![SpringDoc OpenAPI](https://img.shields.io/badge/SpringDoc%20OpenAPI-3.0.2-blue.svg)](https://springdoc.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.2-blue.svg)](https://spring.io/projects/spring-cloud)
+[![OpenPDF](https://img.shields.io/badge/OpenPDF-3.0.5-red.svg)](https://github.com/LibrePDF/OpenPDF)
+[![SpringDoc OpenAPI](https://img.shields.io/badge/SpringDoc%20OpenAPI-3.0.3-blue.svg)](https://springdoc.org/)
 [![Maven](https://img.shields.io/badge/Maven-3.8+-red.svg)](https://maven.apache.org/)
 
 Servicio de generación de reportes para el sistema de gestión de agua.
 
 ## Descripción
 
-Este servicio es responsable de generar reportes y liquidaciones en formato PDF para el sistema de gestión de agua. Utiliza OpenPDF 3.0.3 para la generación de documentos PDF y se integra con otros servicios a través de Spring Cloud. En esta versión se ha migrado completamente de iText a OpenPDF para mejorar el rendimiento y mantener compatibilidad con licencias.
+Este servicio es responsable de generar reportes y liquidaciones en formato PDF para el sistema de gestión de agua. Utiliza OpenPDF 3.0.5 para la generación de documentos PDF y se integra con otros servicios a través de Spring Cloud.
 
 ## Características
 
@@ -26,16 +26,16 @@ Este servicio es responsable de generar reportes y liquidaciones en formato PDF 
 ## Tecnologías
 
 - Java 25
-- Spring Boot 4.0.6
-- Spring Cloud 2025.1.0
-- OpenPDF 3.0.3 (migrado desde iText)
-- Spring Cloud Netflix Eureka Client
+- Spring Boot 4.1.0
+- Spring Cloud 2025.1.2
+- OpenPDF 3.0.5
+- Spring Cloud Consul Discovery
 - Spring Cloud OpenFeign
 - Spring Boot Mail
-- SpringDoc OpenAPI 3.0.2
+- SpringDoc OpenAPI 3.0.3
 - Lombok para reducción de boilerplate code
 - Caffeine para caching
-- Consul para service discovery
+- Hibernate Validator
 
 ## Requisitos
 
@@ -43,7 +43,6 @@ Este servicio es responsable de generar reportes y liquidaciones en formato PDF 
 - Maven 3.8 o superior
 - Acceso a los servicios dependientes:
   - Core Service
-  - Eureka Server
   - Consul Server
 
 ## Configuración
@@ -57,14 +56,30 @@ El servicio se configura a través de los siguientes archivos:
 
 ```yaml
 app:
-  eureka: 8761
-  consul: 8500
+  port: 8092
   logging: debug
   name: report-service
+  consul:
+    host: consul-service
+    port: 8500
   testing: false
   mail:
     username: uid
     password: pwd
+
+server:
+  port: ${app.port}
+
+spring:
+  application:
+    name: ${app.name}
+  cloud:
+    consul:
+      host: ${app.consul.host}
+      port: ${app.consul.port}
+      discovery:
+        prefer-ip-address: true
+        tags: report
 
 management:
   health:
@@ -114,7 +129,7 @@ String result = liquidacionService.sendLiquidacion(prefijoId, facturaId);
 src/main/java/com/sauce/agua/report/
 ├── client/         # Clientes Feign para servicios externos
 │   ├── core/       # Clientes para servicios core
-│   └── facade/     # Clientes para servicios facade
+│   │   └── facade/ # Clientes facade para servicios core
 ├── model/          # DTOs y modelos de datos
 │   └── dto/        # Data Transfer Objects
 ├── service/        # Servicios de negocio
@@ -139,15 +154,6 @@ mvn spring-boot:run
 ```bash
 mvn test
 ```
-
-## Migración desde versión anterior
-
-Esta versión incluye una migración completa de las librerías de PDF:
-
-- **Antes**: iText (`com.lowagie.text`)
-- **Ahora**: OpenPDF (`org.openpdf.text`)
-
-Esta migración mejora el rendimiento y evita problemas de licencias manteniendo toda la funcionalidad existente.
 
 ## Licencia
 

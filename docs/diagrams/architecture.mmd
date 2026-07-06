@@ -19,7 +19,6 @@ graph TD
     end
     
     subgraph "Infraestructura"
-        EUREKA[Eureka Server]
         CONSUL[Consul]
         MAIL[SMTP Server]
     end
@@ -45,5 +44,4 @@ graph TD
     CLIENT --> CLIENTE
     SERVICE --> PDF
     PDF --> MAIL
-    SERVICE --> EUREKA
     SERVICE --> CONSUL

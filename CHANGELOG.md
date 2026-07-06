@@ -7,10 +7,13 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
-## [1.0.1] - 2026-04-28
+## [1.0.1] - 2026-07-06
 
 ### Changed
-- **deps**: Actualización de Spring Boot: 4.0.4 → 4.0.6
+- **deps**: Actualización de Spring Boot: 4.0.6 → 4.1.0
+- **deps**: Actualización de Spring Cloud: 2025.1.0 → 2025.1.2
+- **deps**: Actualización de SpringDoc OpenAPI: 3.0.2 → 3.0.3
+- **deps**: Actualización de OpenPDF: 3.0.3 → 3.0.5
 - **config**: Configuración de Feign Decoder con `ResponseEntityDecoder` y `SpringDecoder` en `ReportConfiguration`
 
 ### Fixed
