@@ -1,8 +1,7 @@
 stateDiagram-v2
     [*] --> Starting
     
-    Starting --> RegisteringEureka: Service Registration
-    RegisteringEureka --> RegisteringConsul: Service Discovery
+    Starting --> RegisteringConsul: Service Registration
     RegisteringConsul --> Ready: Registration Complete
     
     Ready --> GeneratingPDF: PDF Request
