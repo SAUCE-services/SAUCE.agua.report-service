@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.boot.http.converter.autoconfigure.ClientHttpMessageConvertersCustomizer;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 @Configuration
@@ -25,7 +25,7 @@ public class ReportConfiguration {
 
     @Bean
     public FeignHttpMessageConverters feignHttpMessageConverters(
-            ObjectProvider<HttpMessageConverter<?>> converters,
+            ObjectProvider<ClientHttpMessageConvertersCustomizer> converters,
             ObjectProvider<HttpMessageConverterCustomizer> customizers) {
         return new FeignHttpMessageConverters(converters, customizers);
     }
