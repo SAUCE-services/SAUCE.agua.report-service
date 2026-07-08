@@ -7,40 +7,56 @@ sequenceDiagram
     participant PeriodoClient as Periodo Client
     participant MedidorClient as Medidor Client
     participant DetalleClient as Detalle Client
-    participant ConsumoClient as Consumo Client
+    participant ConsumoClient as ConsumoClient Facade
+    participant FacturacionClient as FacturacionClient Facade
     participant ClienteDatoClient as ClienteDato Client
     participant PDF as OpenPDF
     participant Mail as Email Service
     
-    Client->>Controller: POST /liquidacion/generate
-    Controller->>Service: generateOnePdf(prefijoId, facturaId)
+    rect rgb(200, 220, 240)
+        note right of Client: Generar PDF Individual
+        Client->>Controller: GET /api/report/liquidacion/one/pdf/{prefijoId}/{facturaId}
+        Controller->>Service: generateOnePdf(prefijoId, facturaId)
+        
+        Service->>FacturaClient: findByFactura(prefijoId, facturaId)
+        FacturaClient-->>Service: FacturaDto
+        
+        Service->>ClienteClient: findLastByClienteId(clienteId)
+        ClienteClient-->>Service: ClienteDto
+        
+        Service->>PeriodoClient: findByPeriodoId(periodoId)
+        PeriodoClient-->>Service: PeriodoDto
+        
+        Service->>MedidorClient: findByClienteId(clienteId, true)
+        MedidorClient-->>Service: MedidorDto
+        
+        Service->>ConsumoClient: calculateConsumo(consumoContext)
+        ConsumoClient-->>Service: DatoConsumoDto
+        
+        Service->>DetalleClient: findAllByFactura(prefijoId, facturaId)
+        DetalleClient-->>Service: List<DetalleDto>
+        
+        Service->>FacturaClient: findAllByDeudaPrint(clienteId, periodoId)
+        FacturaClient-->>Service: List<FacturaDto>
+        
+        Service->>FacturacionClient: codigopf(factura)
+        FacturacionClient-->>Service: String (barcode)
+        
+        Service->>PDF: makePdf(factura, cliente, periodo, detalles, consumos)
+        PDF-->>Service: PDF File
+    end
     
-    Service->>FacturaClient: findByFactura(prefijoId, facturaId)
-    FacturaClient-->>Service: FacturaDto
+    rect rgb(220, 240, 200)
+        note right of Client: Enviar por Correo
+        Client->>Controller: GET /api/report/liquidacion/sendLiquidacion/{prefijoId}/{facturaId}
+        Controller->>Service: sendLiquidacion(prefijoId, facturaId)
+        
+        Service->>ClienteDatoClient: findByClienteId(clienteId)
+        ClienteDatoClient-->>Service: ClienteDatoDto
+        
+        Service->>Mail: sendEmail(customerEmail, PDF)
+        Mail-->>Service: Email Sent
+    end
     
-    Service->>ClienteClient: findLastByClienteId(clienteId)
-    ClienteClient-->>Service: ClienteDto
-    
-    Service->>PeriodoClient: findByPeriodoId(periodoId)
-    PeriodoClient-->>Service: PeriodoDto
-    
-    Service->>MedidorClient: findByMedidorId(medidorId)
-    MedidorClient-->>Service: MedidorDto
-    
-    Service->>DetalleClient: findAllByFacturaId(facturaId)
-    DetalleClient-->>Service: List<DetalleDto>
-    
-    Service->>ConsumoClient: findAllByFacturaId(facturaId)
-    ConsumoClient-->>Service: List<ConsumoDto>
-    
-    Service->>ClienteDatoClient: findAllByClienteId(clienteId)
-    ClienteDatoClient-->>Service: List<ClienteDatoDto>
-    
-    Service->>PDF: createPDF(factura, cliente, periodo, detalles, consumos)
-    PDF-->>Service: PDF File
-    
-    Service->>Mail: sendEmail(customerEmail, PDF)
-    Mail-->>Service: Email Sent
-    
-    Service-->>Controller: PDF Path
+    Service-->>Controller: Result
     Controller-->>Client: Success Response

@@ -7,6 +7,13 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-08
+
+### Fixed
+- **config**: Exposición del endpoint de health check vía web con acceso unrestricted
+- **fix**: Corrección de error de dependencia en `ReportConfiguration` — reemplazo de `HttpMessageConverter` por `ClientHttpMessageConvertersCustomizer`
+- **fix**: Limpieza de imports no utilizados en `ReportConfiguration` (`MappingJackson2HttpMessageConverter`)
+
 ## [1.0.1] - 2026-07-06
 
 ### Changed
