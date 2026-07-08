@@ -88,6 +88,12 @@ management:
   endpoints:
     access:
       default: none
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      access: unrestricted
 ```
 
 ## Uso

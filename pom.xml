@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.sauce.agua.report</groupId>
 	<artifactId>report-service</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>SAUCE.agua.report-service</name>
 	<description>sauce.agua.report-service</description>
 
